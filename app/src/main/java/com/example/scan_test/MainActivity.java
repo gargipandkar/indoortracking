@@ -30,66 +30,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "Main Activity";
-//    private Context context;
-//    WifiManager wifiManager;
-//
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//
-//        context = getApplicationContext();
-//
-//        Button scan_btn = findViewById(R.id.scan_btn);
-//        wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-//
-//        BroadcastReceiver wifiScanReceiver = new BroadcastReceiver() {
-//            @Override
-//            public void onReceive(Context c, Intent intent) {
-//                boolean success = intent.getBooleanExtra(
-//                        WifiManager.EXTRA_RESULTS_UPDATED, false);
-//                if (success) {
-//                    scanSuccess();
-//                } else {
-//                    // scan failure handling
-//                    scanFailure();
-//                }
-//            }
-//        };
-//
-//        IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-//        context.registerReceiver(wifiScanReceiver, intentFilter);
-//
-//        scan_btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                boolean success = wifiManager.startScan();
-//                if (!success) {
-//                    // scan failure handling
-//                    scanFailure();
-//                }
-//            }
-//        });
-//    }
-//
-//    private void scanSuccess() {
-//        List<ScanResult> results = wifiManager.getScanResults();
-//        Log.i(TAG, wifiManager.getConnectionInfo().toString());
-//
-//        //... use new scan results ...
-//        Log.i(TAG, "Scan SUCCESS: "+results.toString());
-//    }
-//
-//    private void scanFailure() {
-//        // handle failure: new scan did NOT succeed
-//        // consider using old scan results: these are the OLD results!
-//        List<ScanResult> results = wifiManager.getScanResults();
-//        //... potentially use older scan results ...
-//        Log.i(TAG, "Scan FAILURE: "+results.toString());
-//    }
-
     private WifiManager wifiManager;
     private BroadcastReceiver wifiReceiver;
 
