@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "indoortracking",
+  "private_key_id": "a14c5a2afc7e7a81784291df09c3b1e2fd6282ef",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDOOrKJcsH+V0O+\nRCP2TJCpYqUG53dSuxh24/J0X3iJH56caQr6PNri8BMvkLvHIFG6wbayQPUMGH/G\nMI17Uu105KMuYYmFf7sIrOACg+JYvWccCnjvMedh2vCSkwAP/1hcim/X4JMzO+WV\nReCadI39Je078bh7jV6vZ2eIJDQf7TSWIIjTslkAybsp5id4uKuaMkGFWbj0UD0N\niRX4yL9GGW+1Qi/QYJ2/TAXtqp4KVBw8niwRAKrK3EBdPP8zm0K5Fg6zHlCYPnSi\nA2Mt6Fn9o97vs5Rh6Nm/4swfyHVir+oa3Tu4SeVPas2L/KT9nxH9/jwCTKqGNCX0\nWymuZLiDAgMBAAECggEACo17XEgogBTEDSTceDpzvo8jJabLdsrHFjJU0jqeZtnc\n2mEPpD1f7/Pb73em/Cn9tKI78IQdZeiNBT2vx6s3Jl+asAFisZeXIPsDnW1VNDhA\n4fDxPkAd+GZlIALwomDtCxM0ZOYDckAy38ALHawwJc9+g647Q+s4eJ5AcHl1x1pa\n4ftUtnb6DKXSp8CgLmcEbSUszaJWebMOpn2WMb3XLfgdsEwS4OPwmk5rgKt/4sAc\nLfi2n0tsfY4uEBEMZv0ZHd2wvIQKOJdDBntxoJ4tidsx6Gky6NPiIoZ+bjcZ6S/3\n3vpphUk9F6fhHijLJ7Rr5FrtvGDKATj4rNZgQLshbQKBgQD04DJ05U6RkqGp1WuH\nniJzcaxEWzyEbvzm2+7bF0xFFHLoU5J64Hh5bsozA6oSjQ9OWvGN3kPpc44V1tC1\n0s8kjKNjtXX4q4v4swNB0uZXBq7lxyqlpPUZGalE90hkrbwrYmrBTsxR58Zs++yX\nAE2pxx/JcZMlD7LoWesm4HCwXQKBgQDXmQ7P5C8kjaffb/B1GjMRtao3HqcQQeDX\nRyZfa/YDgK0U9RNGyK7P+u4pjQ9tM8FkuDFTHndNzglM0f1BUlTLFRCkVWzlaEo8\nSYByROw+Rt16qG5rNJcBKXp0+Uhd8GP+7MslIJFbTesVZ6X/N90PczpaCZDrGzTL\nuKneToP+XwKBgQDTP2onz/4UtVODqNqn1zLPNrwvCCpP8VN5cThAh3vDiF2MsTQH\njwg/ceU7Vyjr8gbHSMtj4N/jUE2952CLyr3qQO1fQhbwnEUXGo9vxJnzb4+IKGZR\nGdpbefi9xzoLqJlRMAj6lJjM+88BC9/RcHCPS3nPlYwkB8QGkDO9iReN/QKBgQDG\nstlj3/lSxvsgghoq0qqed78Ybbeq1AxUW86Rwv5I3B6oYfYSFoKGS82Tnd3J1xk1\nqkxLPpjVrD4F/sJZoXdkc1WTHuftxeAlD9jBd6QDAWy9zt11EFLbT07834JCkXqX\nR8UxwoI0k+tFHvFt9h5WTuxIbuiQxdIyr05fBB3CIQKBgQCmJ/TBrNAjphsGQQS9\nhnK+v4aH7NwcUToTHHvD2lbeVN9+kS+Ch92eDxw2WWkriJwrKUy6FDm9Us5Z4svp\n/ir955nfpnRpoGOs3lPDReiK9xP5neNnXPxr89fb2SGQbliSI8snnS3IZ7GhpZlP\nV4zm+LamnrOS+ZLdkV58Et9e5w==\n-----END PRIVATE KEY-----\n",
+  "client_email": "projectadmin@indoortracking.iam.gserviceaccount.com",
+  "client_id": "104475782998826078879",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/projectadmin%40indoortracking.iam.gserviceaccount.com"
+}
