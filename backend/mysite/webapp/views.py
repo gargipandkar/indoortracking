@@ -26,7 +26,7 @@ def RegisterPage(request):
 
         
     context = {'form':form}
-    return render(request, 'templates/register.html', context)
+    return render(request, 'register.html', context)
 
 # User login
 def LoginPage(request):
@@ -42,7 +42,7 @@ def LoginPage(request):
             messages.info(request,'Username or password is incorrect')
             
     context = {}
-    return render(request, 'templates/login.html', context)
+    return render(request, 'login.html', context)
 
 def LogoutUser(request):
     logout(request)

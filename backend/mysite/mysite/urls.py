@@ -19,8 +19,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('webapp/', include('webapp.urls')),
     path('admin/', admin.site.urls),
+    path('', include('webapp.urls')),
+    
 ]
 
 if settings.DEBUG:
