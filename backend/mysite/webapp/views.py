@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 
 from django.views.generic import ListView, CreateView
 from .models import Floorplan
@@ -23,4 +23,7 @@ class AddPlanView(CreateView):
         return super().form_valid(form)
     
     
-
+def getFloorplans(request):
+    plans = Floorplan.objects.all().values()
+    plans_list = list(plans)
+    return JsonResponse(plans_list, safe=False)

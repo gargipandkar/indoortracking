@@ -25,4 +25,10 @@
         android:layout_height="wrap_content"
         android:text="No WiFi APs available"
         android:textAlignment="center" />
+
+    <ImageView
+        android:id="@+id/plan_img"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:mipmap/sym_def_app_icon" />
 </LinearLayout>
