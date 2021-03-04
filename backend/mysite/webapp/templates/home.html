@@ -1,11 +1,16 @@
 {% load static %}
 
 <!-- templates/home.html -->
+<body>
+  {% include 'navbar.html' %}
 <h1>Django Image Uploaded</h1>
 <ul>
   {% for floorplan in object_list %}
     <h2>{{ floorplan.title }}</h2>
-    <img src = "{% static 'images/Floor_WAP_1.png' %}" ,alt = "{FloorPlan}">
-    <!--img src="{{ floorplan.plan.url}}" alt="{{ floorplan.title }}"  style="width:25%;height:25%;"-->
-  {% endfor %}
+    <img src = "images/Floor_WAP_1.png", alt = "{FloorPlan}", class = 'fit-picture'>
+    {% endfor %}
 </ul>
+</body>
+    
+    
+    
