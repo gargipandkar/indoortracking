@@ -7,7 +7,7 @@
 <ul>
   {% for floorplan in object_list %}
     <h2>{{ floorplan.title }}</h2>
-    <img src = "images/Floor_WAP_1.png", alt = "{FloorPlan}", class = 'fit-picture'>
+    <img src = "{{floorplan.plan.url}}">
     {% endfor %}
 </ul>
 </body>
