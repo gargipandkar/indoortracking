@@ -11,6 +11,8 @@ urlpatterns = [
 	path('logout/', views.LogoutUser, name="logout"),
     path('viewplans/', views.HomePageView.as_view(), name='home'),
     path('addplan/', views.AddPlanView.as_view(), name='addplan'),
-    path('getplans/', views.getFloorplans, name='getplans')
+    path('loginmobile/', views.LoginMobileUser, name='loginmobile'),
+    path('getplans/', views.GetAllPlans, name='getplans'),
+    path('savemapping/', views.SaveMappedPoints, name='savemapping')
 ]
 
