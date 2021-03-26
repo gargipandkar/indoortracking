@@ -33,7 +33,7 @@ public class FloorplanScanner{
         return new FloorplanScanner();
     }
 
-    public void findPoint(List<ScanResult> scanResultList){
+    public ScanPoint findPoint(List<ScanResult> scanResultList){
         ScanPoint point = new ScanPoint(0, 0); // placeholder coordinates
         Map<String, ArrayList<Integer>> SSIDList = new HashMap<>();
         for(ScanResult scanResult: scanResultList){
@@ -52,7 +52,7 @@ public class FloorplanScanner{
         }
 
         point.addAllAPs(SSIDList);
-
+        return point;
     }
 
     public void mapPoint(double x, double y, List<ScanResult> scanResultList){
@@ -89,10 +89,20 @@ public class FloorplanScanner{
         return allJSONresults;
     }
 
-    public Request<JSONArray> getLocation(Context ctx, String base_url){
+    public JSONArray sendTest(List<ScanResult> scanResultList) throws JSONException {
+        ScanPoint point = findPoint(scanResultList);
+        JSONArray allJSONresults = new JSONArray();
+        JSONObject obj = new JSONObject();
+        obj.put("point", point.getPoint());
+        obj.put("vector", point.getVector());
+        allJSONresults.put(obj);
+        return allJSONresults;
+    }
+
+    public Request<JSONArray> getLocation(Context ctx, String base_url, List<ScanResult> scanResultList){
         JSONArray mapped_data;
         try {
-            mapped_data = sendResults();
+            mapped_data = sendTest(scanResultList);
             Log.i("REQUEST DATA", mapped_data.toString());
         } catch (JSONException e){
             Log.i("JSON EXCEPTION", e.toString());
