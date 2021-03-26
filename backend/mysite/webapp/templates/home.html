@@ -3,11 +3,10 @@
 <!-- templates/home.html -->
 <body>
   {% include 'navbar.html' %}
-<h1>Django Image Uploaded</h1>
 <ul>
   {% for floorplan in object_list %}
     <h2>{{ floorplan.title }}</h2>
-    <img src = "{{floorplan.plan.url}}">
+    <img src = "{{floorplan.plan.url}}" width="50%" width="50%">
     {% endfor %}
 </ul>
 </body>

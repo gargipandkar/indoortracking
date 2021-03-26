@@ -88,16 +88,23 @@ def GetAllPlans(request):
 def SaveMappedPoints(request):
     if request.method == 'POST':
         mydata = json.loads(request.body.decode("utf-8"))
+        
         for item in mydata:
             print("Point = ", item['point'])
             print("Vector = ", item['vector'])
             point = MappedPoint.objects.create(imgcoordinate=item['point'], scanvalues=item['vector'])
 
-        knnalgo.train_model(mydata)
+        # print("Cleaned Vector = ", knnalgo.train_model(mydata))
+        istrained = knnalgo.train_model(mydata)
+        print("Model Trained = ", istrained)
         return JsonResponse(list(["SAVED"]), safe=False)
 
 def GetLocation(request):
-    location = knnalgo.get_prediction(request['testpoint'])
-    return HttpResponse(location)
-
+    mydata = json.loads(request.body.decode("utf-8"))
+        
+    testvector = mydata[0]['vector']
+    location = knnalgo.get_prediction(testvector)
+    # location = [0.0, 0.0]
+    return JsonResponse(list(location), safe=False)
+    
     

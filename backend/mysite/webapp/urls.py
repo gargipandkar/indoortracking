@@ -13,6 +13,7 @@ urlpatterns = [
     path('addplan/', views.AddPlanView.as_view(), name='addplan'),
     path('loginmobile/', views.LoginMobileUser, name='loginmobile'),
     path('getplans/', views.GetAllPlans, name='getplans'),
-    path('savemapping/', views.SaveMappedPoints, name='savemapping')
+    path('savemapping/', views.SaveMappedPoints, name='savemapping'),
+    path('getlocation/', views.GetLocation, name='getlocation')
 ]
 
