@@ -15,9 +15,11 @@ def parse_point_string(pointstr):
     return pointls
 
 def clean_vectors(vectordictls):
+    # get superset of all APs scanned across floor in alphabetical order
     uniqueapls = list(set(k for vectordict in vectordictls for k in vectordict.keys()))
     uniqueapls.sort()
 
+    # a vector is a list of the RSSI value of each AP in the superset (and 0 if AP was not detected at a point)
     result = []
     for item in vectordictls:
         inputdict = dict.fromkeys(uniqueapls, 0)
@@ -49,6 +51,6 @@ def train_model(scanmap):
 
 def get_prediction(testvector):
     testvector = parse_vector_string(testvector)
-    testvector = clean_vectors(list(testvector))[0]
+    testvector = clean_vectors([testvector])
     result = model.predict(testvector)
     return result

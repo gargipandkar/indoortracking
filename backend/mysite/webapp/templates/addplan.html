@@ -1,7 +1,9 @@
+{% load static %}
 <!-- templates/addplan.html -->
-<h1>Add Floorplan Page</h1>
+
+<h1>Add a new floorplan</h1>
 <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
   {{ form.as_p }}
-  <button type="submit">Submit New Post</button>
+  <button type="submit">Submit</button>
 </form>
