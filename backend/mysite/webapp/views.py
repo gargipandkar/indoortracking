@@ -17,7 +17,12 @@ from .forms import FloorplanForm, CreateUserForm
 
 from django.urls import reverse_lazy
 import json
+
+# My python files
 import knnalgo
+from tools import *
+
+PROJECT_PHASE = "dev"
 
 
 # User registration
@@ -107,18 +112,44 @@ def SaveMappedPoints(request):
             print("Vector = ", item['vector'])
             point = MappedPoint.objects.create(imgcoordinate=item['point'], scanvalues=item['vector'])
 
+        if PROJECT_PHASE == "dev":
+            algols = [knnalgo.train_model]
+            for algo in algols:
+                istrained = algo(mydata)
         # print("Cleaned Vector = ", knnalgo.train_model(mydata))
-        istrained = knnalgo.train_model(mydata)
+        else:
+            istrained = knnalgo.train_model(mydata)
+        initialize_predfile()
         print("Model Trained = ", istrained)
         return JsonResponse(list(["SAVED"]), safe=False)
+
+# define counter variable for test points
+TEST_POINT_COUNT = 0
+TEST_POINT_MAX = 5
 
 # @login_required(login_url='login')  
 # @allowed_users(allowed_roles=['admin']) 
 def GetLocation(request):
     mydata = json.loads(request.body.decode("utf-8"))
     testvector = mydata[0]['vector']
+
+    if PROJECT_PHASE=="dev":
+        algols = [knnalgo.get_prediction]
+        ls = []
+        for algo in algols:
+            loc = algo(testvector)
+            ls.append(loc)
+        save_predictions(TEST_POINT_COUNT, ls)
+        TEST_POINT_COUNT +=1
+        if TEST_POINT_COUNT == TEST_POINT_MAX:
+            evaluate_models()
+ 
     location = knnalgo.get_prediction(testvector)
-    # location = [0.0, 0.0]
-    return JsonResponse(list(location), safe=False)
+    print(location)
+    locationls = location.tolist()
+    # json_str = json.dumps(locationls)    
+    # TODO: format the response currently looks like [[0, 0]]
+    return JsonResponse(list(locationls), safe=False)
+        
     
     
