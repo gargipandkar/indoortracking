@@ -19,10 +19,11 @@ from django.urls import reverse_lazy
 import json
 
 # My python files
-import knnalgo
 from tools import *
+import knnalgo
 
 PROJECT_PHASE = "dev"
+CURRENT_PLAN = ""
 
 
 # User registration
@@ -45,7 +46,7 @@ def RegisterPage(request):
     return render(request, 'register.html', context)
 
 # User login
-@unauthenticated_user
+# @unauthenticated_user
 def LoginPage(request):
     if request.method == 'POST':
         username = request.POST.get("username")
@@ -100,17 +101,21 @@ def GetAllPlans(request):
         plans = Floorplan.objects.all().values()
         plans_list = list(plans)
         return JsonResponse(plans_list, safe=False)
+    if request.method == 'POST':
+        CURRENT_PLAN = request.POST.get("plan")
+        return JsonResponse(list(CURRENT_PLAN), safe=False)
 
 # @login_required(login_url='login')  
 # @allowed_users(allowed_roles=['admin']) 
 def SaveMappedPoints(request):
     if request.method == 'POST':
         mydata = json.loads(request.body.decode("utf-8"))
+        print("Current plan = ", CURRENT_PLAN)
         
         for item in mydata:
             print("Point = ", item['point'])
             print("Vector = ", item['vector'])
-            point = MappedPoint.objects.create(imgcoordinate=item['point'], scanvalues=item['vector'])
+            point = MappedPoint.objects.create(imgcoordinate=item['point'], scanvalues=item['vector'], plan=CURRENT_PLAN)
 
         if PROJECT_PHASE == "dev":
             algols = [knnalgo.train_model]

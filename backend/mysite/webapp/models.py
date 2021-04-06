@@ -11,6 +11,7 @@ class Floorplan(models.Model):
 class MappedPoint(models.Model):
     imgcoordinate = models.TextField()
     scanvalues = models.TextField()
+    plan = models.TextField(default="Default floorplan")
 
     def __str__(self):
         return self.imgcoordinate
