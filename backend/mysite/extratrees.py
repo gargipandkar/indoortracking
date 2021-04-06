@@ -2,7 +2,7 @@ from sklearn.tree import ExtraTreeRegressor
 import pickle
 from tools import *
 
-filename = "models/extratrees_model.sav"
+filename = "webapp/models/extratrees_model.sav"
 
 model = ExtraTreeRegressor(splitter = 'best')
 

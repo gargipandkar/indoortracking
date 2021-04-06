@@ -1,7 +1,7 @@
 import pandas as pd
 
 uniqueapls = []
-filename_pred = "models/evaluation.xlsx"
+filename_pred = "webapp/models/evaluation.xlsx"
 models = ["knn", "nn"]
 
 def parse_vector_string(vectorstr):

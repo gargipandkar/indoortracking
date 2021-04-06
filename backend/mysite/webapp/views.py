@@ -105,12 +105,15 @@ def GetAllPlans(request):
         plans_list = list(plans)
         return JsonResponse(plans_list, safe=False)
     if request.method == 'POST':
+        global CURRENT_PLAN
         CURRENT_PLAN = request.POST.get("plan")
+        print(request.POST.get("plan"))
         return HttpResponse(CURRENT_PLAN)
 
 # @login_required(login_url='login')  
 # @allowed_users(allowed_roles=['admin']) 
 def SaveMappedPoints(request):
+    global CURRENT_PLAN
     if request.method == 'POST':
         mydata = json.loads(request.body.decode("utf-8"))
         print("Current plan = ", CURRENT_PLAN)
@@ -142,8 +145,12 @@ TEST_POINT_MAX = 5
 # @login_required(login_url='login')  
 # @allowed_users(allowed_roles=['admin']) 
 def GetLocation(request):
+    global TEST_POINT_COUNT
+    global TEST_POINT_MAX
     mydata = json.loads(request.body.decode("utf-8"))
     testvector = mydata[0]['vector']
+
+    print(testvector)
 
     if PROJECT_PHASE=="dev":
         algols = [knnalgo.get_prediction, svr.get_prediction, extratrees.get_prediction, randomforest.get_prediction]
@@ -153,6 +160,7 @@ def GetLocation(request):
             ls.append(loc.to_list())
         save_predictions(TEST_POINT_COUNT, ls)
         TEST_POINT_COUNT +=1
+        
         if TEST_POINT_COUNT == TEST_POINT_MAX:
             evaluate_models()
  

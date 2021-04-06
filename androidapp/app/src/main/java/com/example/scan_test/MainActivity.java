@@ -69,6 +69,14 @@ public class MainActivity extends AppCompatActivity {
         textWifi = findViewById(R.id.wifi_txt);
         imgPlan = findViewById(R.id.plan_img);
 
+        buttonScan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent gotoWifi_intent = new Intent(MainActivity.this, BLEScan.class);
+                startActivity(gotoWifi_intent);
+            }
+        });
+
         // Trying Android-server API
         final RequestQueue queue = Volley.newRequestQueue(this);
         buttonGotoBLE.setOnClickListener(new View.OnClickListener() {

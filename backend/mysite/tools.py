@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 uniqueapls = []
-filename_pred = "models/evaluation.xlsx"
+filename_pred = "webapp/models/evaluation.xlsx"
 MODEL_NAMES = ["knn", "svr", "extratrees", "randomforest"]
 actual_col = "Actual coordinates"
 
@@ -19,6 +19,7 @@ def parse_point_string(pointstr):
     return pointls
 
 def get_superset(vectordictls):
+    global uniqueapls
     # get superset of all APs scanned across floor in alphabetical order
     uniqueapls.extend(list(set(k for vectordict in vectordictls for k in vectordict.keys())))
     uniqueapls.sort()
@@ -35,6 +36,7 @@ def clean_vectors(vectordictls):
     return result
 
 def remove_aps(testdict):
+    global uniqueapls
     # TODO: remove APs that are not fixed
     return dict([(key, val) for key, val in testdict.items() if key in uniqueapls])
 

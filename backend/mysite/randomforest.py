@@ -2,7 +2,7 @@ from sklearn.ensemble import RandomForestRegressor
 import pickle
 from tools import *
 
-filename = "models/randomforest_model.sav"
+filename = "webapp/models/randomforest_model.sav"
 model = RandomForestRegressor(n_estimators = 200, oob_score = True)
 
 def train_model(scanmap):

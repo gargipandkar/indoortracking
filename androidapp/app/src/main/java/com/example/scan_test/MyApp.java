@@ -35,7 +35,6 @@ public class MyApp extends Application {
         return _requestQueue;
     }
 
-
     /**
      * Checks the response headers for session cookie and saves it
      * if it finds it.

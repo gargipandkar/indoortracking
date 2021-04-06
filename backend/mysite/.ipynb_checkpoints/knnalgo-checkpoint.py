@@ -68,7 +68,7 @@ def train_model(scanmap):
     pickle.dump(model, open(filename, 'wb'))
    
     return True
-
+    
 def get_trained_model():
     loaded_model = pickle.load(open(filename, 'rb'))
     return loaded_model

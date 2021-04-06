@@ -2,7 +2,7 @@ from sklearn.svm import SVR
 import pickle
 from tools import *
 
-filename = "models/svr_model.sav"
+filename = "webapp/models/svr_model.sav"
 
 model = SVR('poly')
 

@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +57,12 @@ public class WiFiScan extends AppCompatActivity {
                     Log.i(TAG, "SSID: "+sr.SSID+", Level: "+sr.level);
                 }
                 textWifi.setText(display);
+
+                // Testing floorplan scanner
+                FloorplanScanner scanner = FloorplanScanner.getInstance();
+                scanner.mapPoint(0, 0, results);
+                try{ scanner.sendResults(context, MyApp.Domain); }
+                catch(JSONException e){ Log.i("JSON EXCEPTION", e.getMessage());}
             }
         };
 
