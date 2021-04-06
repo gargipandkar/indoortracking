@@ -21,6 +21,9 @@ import json
 # My python files
 from tools import *
 import knnalgo
+import svr
+import extratrees
+import randomforest
 
 PROJECT_PHASE = "dev"
 CURRENT_PLAN = ""
@@ -103,7 +106,7 @@ def GetAllPlans(request):
         return JsonResponse(plans_list, safe=False)
     if request.method == 'POST':
         CURRENT_PLAN = request.POST.get("plan")
-        return JsonResponse(list(CURRENT_PLAN), safe=False)
+        return HttpResponse(CURRENT_PLAN)
 
 # @login_required(login_url='login')  
 # @allowed_users(allowed_roles=['admin']) 
@@ -116,15 +119,19 @@ def SaveMappedPoints(request):
             print("Point = ", item['point'])
             print("Vector = ", item['vector'])
             point = MappedPoint.objects.create(imgcoordinate=item['point'], scanvalues=item['vector'], plan=CURRENT_PLAN)
-
+            
         if PROJECT_PHASE == "dev":
-            algols = [knnalgo.train_model]
+            algols = [knnalgo.train_model, svr.train_model, extratrees.train_model, randomforest.train_model]
             for algo in algols:
                 istrained = algo(mydata)
         # print("Cleaned Vector = ", knnalgo.train_model(mydata))
         else:
             istrained = knnalgo.train_model(mydata)
-        initialize_predfile()
+
+        if PROJECT_PHASE=="dev":
+            # initialize excel file for model evaluation
+            initialize_predfile()
+
         print("Model Trained = ", istrained)
         return JsonResponse(list(["SAVED"]), safe=False)
 
@@ -139,11 +146,11 @@ def GetLocation(request):
     testvector = mydata[0]['vector']
 
     if PROJECT_PHASE=="dev":
-        algols = [knnalgo.get_prediction]
+        algols = [knnalgo.get_prediction, svr.get_prediction, extratrees.get_prediction, randomforest.get_prediction]
         ls = []
         for algo in algols:
             loc = algo(testvector)
-            ls.append(loc)
+            ls.append(loc.to_list())
         save_predictions(TEST_POINT_COUNT, ls)
         TEST_POINT_COUNT +=1
         if TEST_POINT_COUNT == TEST_POINT_MAX:

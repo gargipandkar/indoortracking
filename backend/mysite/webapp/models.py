@@ -4,6 +4,7 @@ from django.db import models
 class Floorplan(models.Model):
     title = models.TextField()
     plan = models.ImageField()
+    # status = models.TextField(default="New")
 
     def __str__(self):
         return self.title

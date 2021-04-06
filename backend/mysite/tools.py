@@ -1,10 +1,9 @@
 import pandas as pd
 import numpy as np
 
-
 uniqueapls = []
 filename_pred = "models/evaluation.xlsx"
-MODEL_NAMES = ["knn", "nn"]
+MODEL_NAMES = ["knn", "svr", "extratrees", "randomforest"]
 actual_col = "Actual coordinates"
 
 def parse_vector_string(vectorstr):
@@ -36,6 +35,7 @@ def clean_vectors(vectordictls):
     return result
 
 def remove_aps(testdict):
+    # TODO: remove APs that are not fixed
     return dict([(key, val) for key, val in testdict.items() if key in uniqueapls])
 
 

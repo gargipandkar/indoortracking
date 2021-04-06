@@ -1,53 +1,57 @@
 from sklearn.svm import SVR
+import pickle
+from tools import *
+
+filename = "models/svr_model.sav"
 
 model = SVR('poly')
 
-def parse_vector_string(vectorstr):
-    vectorls = vectorstr.replace("[", "").replace("]", "").replace(" ", "")
-    vectorls = vectorls.split(",")
-    it = iter(vectorls)
-    vectordict = dict(zip(it, it))
-    return vectordict
+# def train_model(scanmap):
+#     #x --> vectors of RSSI values
+#     x = []
+#     temp_x = []
+#     #y --> coordinates of locations
+#     y = []
+  
+#     for item in scanmap:
+#         vectorstr = item['vector']
+#         temp_x.append(parse_vector_string(vectorstr))
+#         pointstr = item['point']
+#         y.append(parse_point_string(pointstr))
 
-def parse_point_string(pointstr):
-    pointls = pointstr.split(",")
-    return pointls
+#     x = clean_vectors(temp_x)
+#     # return x
 
-def clean_vectors(vectordictls):
-    uniqueapls = list(set(k for vectordict in vectordictls for k in vectordict.keys()))
-    uniqueapls.sort()
+#     model.fit(x, y)
+#     return True
 
-    result = []
-    for item in vectordictls:
-        inputdict = dict.fromkeys(uniqueapls, 0)
-        inputdict.update(item)
-        inputls = [int(val) for val in inputdict.values()]
-        result.append(inputls)
-    
-    return result
-
+# def get_prediction(testvector):
+#     testvector = parse_vector_string(testvector)
+#     testvector = clean_vectors(list(testvector))[0]
+#     result = model.predict(testvector)
+#     return result
 
 def train_model(scanmap):
     #x --> vectors of RSSI values
     x = []
-    temp_x = []
     #y --> coordinates of locations
     y = []
-  
-    for item in scanmap:
-        vectorstr = item['vector']
-        temp_x.append(parse_vector_string(vectorstr))
-        pointstr = item['point']
-        y.append(parse_point_string(pointstr))
-
-    x = clean_vectors(temp_x)
-    # return x
+    x, y = get_model_inputs(scanmap)
 
     model.fit(x, y)
+    # save the model to disk
+    pickle.dump(model, open(filename, 'wb'))
+   
     return True
+def get_trained_model():
+    loaded_model = pickle.load(open(filename, 'rb'))
+    return loaded_model
 
 def get_prediction(testvector):
+    # load the model from disk
+    loaded_model = pickle.load(open(filename, 'rb'))
     testvector = parse_vector_string(testvector)
-    testvector = clean_vectors(list(testvector))[0]
+    testvector = remove_aps(testvector)
+    testvector = clean_vectors([testvector])
     result = model.predict(testvector)
     return result

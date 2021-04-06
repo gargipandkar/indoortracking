@@ -3,8 +3,10 @@ from sklearn.neighbors import KNeighborsRegressor
 import pickle
 from tools import *
 
-model = KNeighborsRegressor(weights='distance', p=1)
 filename = "models/knn_model.sav"
+model = KNeighborsRegressor(weights='distance', p=1)
+
+
 # uniqueapls = []
 
 # def parse_vector_string(vectorstr):
