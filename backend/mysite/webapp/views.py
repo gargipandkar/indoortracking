@@ -107,7 +107,8 @@ def GetAllPlans(request):
     if request.method == 'POST':
         global CURRENT_PLAN
         CURRENT_PLAN = request.POST.get("plan")
-        print(request.POST.get("plan"))
+        print(CURRENT_PLAN)
+        set_current_plan(CURRENT_PLAN)
         return HttpResponse(CURRENT_PLAN)
 
 # @login_required(login_url='login')  
@@ -124,10 +125,9 @@ def SaveMappedPoints(request):
             point = MappedPoint.objects.create(imgcoordinate=item['point'], scanvalues=item['vector'], plan=CURRENT_PLAN)
             
         if PROJECT_PHASE == "dev":
-            algols = [knnalgo.train_model, svr.train_model, extratrees.train_model, randomforest.train_model]
+            algols = [knnalgo.train_model, extratrees.train_model, randomforest.train_model]
             for algo in algols:
                 istrained = algo(mydata)
-        # print("Cleaned Vector = ", knnalgo.train_model(mydata))
         else:
             istrained = knnalgo.train_model(mydata)
 
@@ -135,41 +135,47 @@ def SaveMappedPoints(request):
             # initialize excel file for model evaluation
             initialize_predfile()
 
+        # update status of floorplan
+        planobj = Floorplan.objects.get(title=CURRENT_PLAN)
+        planobj.status = "MAPPED"
+        planobj.save()
+
         print("Model Trained = ", istrained)
         return JsonResponse(list(["SAVED"]), safe=False)
 
+
 # define counter variable for test points
 TEST_POINT_COUNT = 0
-TEST_POINT_MAX = 5
+TEST_POINT_MAX = get_test_count()
 
 # @login_required(login_url='login')  
 # @allowed_users(allowed_roles=['admin']) 
 def GetLocation(request):
+    global CURRENT_PLAN
+    print("Current plan = ", CURRENT_PLAN)
+
     global TEST_POINT_COUNT
     global TEST_POINT_MAX
+
     mydata = json.loads(request.body.decode("utf-8"))
     testvector = mydata[0]['vector']
-
     print(testvector)
 
-    if PROJECT_PHASE=="dev":
-        algols = [knnalgo.get_prediction, svr.get_prediction, extratrees.get_prediction, randomforest.get_prediction]
+    if PROJECT_PHASE=="dev" and TEST_POINT_COUNT<TEST_POINT_MAX:
+        algols = [knnalgo.get_prediction, extratrees.get_prediction, randomforest.get_prediction]
         ls = []
         for algo in algols:
             loc = algo(testvector)
-            ls.append(loc.to_list())
+            ls.append(loc.tolist())
         save_predictions(TEST_POINT_COUNT, ls)
         TEST_POINT_COUNT +=1
-        
+
         if TEST_POINT_COUNT == TEST_POINT_MAX:
             evaluate_models()
  
     location = knnalgo.get_prediction(testvector)
     print(location)
-    locationls = location.tolist()
-    # json_str = json.dumps(locationls)    
-    # TODO: format the response currently looks like [[0, 0]]
+    locationls = location.tolist()  
+    # response format looks like --> [[0, 0]]
     return JsonResponse(list(locationls), safe=False)
-        
-    
     

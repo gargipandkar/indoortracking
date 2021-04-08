@@ -4,7 +4,8 @@ from django.db import models
 class Floorplan(models.Model):
     title = models.TextField()
     plan = models.ImageField()
-    # status = models.TextField(default="New")
+    aplist = models.TextField(null=True)
+    status = models.TextField(default="NEW")
 
     def __str__(self):
         return self.title
@@ -12,7 +13,7 @@ class Floorplan(models.Model):
 class MappedPoint(models.Model):
     imgcoordinate = models.TextField()
     scanvalues = models.TextField()
-    plan = models.TextField(default="Default floorplan")
+    plan = models.TextField(null=True)
 
     def __str__(self):
         return self.imgcoordinate

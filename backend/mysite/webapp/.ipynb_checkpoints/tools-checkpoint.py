@@ -1,7 +1,7 @@
 import pandas as pd
 
 uniqueapls = []
-filename_pred = "webapp/models/evaluation.xlsx"
+filename_pred = "webapp/algos/evaluation.xlsx"
 models = ["knn", "nn"]
 
 def parse_vector_string(vectorstr):
@@ -32,7 +32,7 @@ def clean_vectors(vectordictls):
     
     return result
 
-def remove_aps(testdict):
+def filter_aps(testdict):
     return dict([(key, val) for key, val in testdict.items() if key in uniqueapls])
 
 

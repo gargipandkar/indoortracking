@@ -2,7 +2,7 @@ from sklearn.svm import SVR
 import pickle
 from tools import *
 
-filename = "webapp/models/svr_model.sav"
+filename = "webapp/algos/svr_model.sav"
 
 model = SVR('poly')
 
@@ -51,7 +51,7 @@ def get_prediction(testvector):
     # load the model from disk
     loaded_model = pickle.load(open(filename, 'rb'))
     testvector = parse_vector_string(testvector)
-    testvector = remove_aps(testvector)
+    testvector = filter_aps(testvector)
     testvector = clean_vectors([testvector])
-    result = model.predict(testvector)
+    result = loaded_model.predict(testvector)
     return result

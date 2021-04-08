@@ -2,7 +2,7 @@ from sklearn.tree import ExtraTreeRegressor
 import pickle
 from tools import *
 
-filename = "webapp/models/extratrees_model.sav"
+filename = "webapp/algos/extratrees_model.sav"
 
 model = ExtraTreeRegressor(splitter = 'best')
 
@@ -26,7 +26,7 @@ def get_prediction(testvector):
     # load the model from disk
     loaded_model = pickle.load(open(filename, 'rb'))
     testvector = parse_vector_string(testvector)
-    testvector = remove_aps(testvector)
+    testvector = filter_aps(testvector)
     testvector = clean_vectors([testvector])
-    result = model.predict(testvector)
+    result = loaded_model.predict(testvector)
     return result
