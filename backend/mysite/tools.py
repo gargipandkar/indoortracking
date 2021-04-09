@@ -45,9 +45,9 @@ def clean_vectors(vectordictls):
 
 def filter_aps(testdict):
     global uniqueapls
-    return dict([(key, val) for key, val in testdict.items() if key in uniqueapls])
+    # return dict([(key, val) for key, val in testdict.items() if key in uniqueapls])
     # only consider fixed APs --> any of the SUTD networks or eduroam
-    # return dict([(key, val) for key, val in testdict.items() if key in uniqueapls and ("SUTD" in key or "eduroam" in key)])
+    return dict([(key, val) for key, val in testdict.items() if key in uniqueapls and ("SUTD" in key or "eduroam" in key)])
 
 def save_aplist(currentplan, ls):
     print(currentplan)

@@ -162,6 +162,7 @@ def GetLocation(request):
     print(testvector)
 
     if PROJECT_PHASE=="dev" and TEST_POINT_COUNT<TEST_POINT_MAX:
+        print("# of test points = ", TEST_POINT_MAX)
         algols = [knnalgo.get_prediction, extratrees.get_prediction, randomforest.get_prediction]
         ls = []
         for algo in algols:
@@ -170,8 +171,11 @@ def GetLocation(request):
         save_predictions(TEST_POINT_COUNT, ls)
         TEST_POINT_COUNT +=1
 
-        if TEST_POINT_COUNT == TEST_POINT_MAX:
+        print("Test point saved: ", TEST_POINT_COUNT)
+
+    if TEST_POINT_COUNT == TEST_POINT_MAX:
             evaluate_models()
+
  
     location = knnalgo.get_prediction(testvector)
     print(location)
