@@ -24,6 +24,7 @@ import knnalgo
 import svr
 import extratrees
 import randomforest
+import simplenn
 
 PROJECT_PHASE = "dev"
 CURRENT_PLAN = ""
@@ -49,7 +50,7 @@ def RegisterPage(request):
     return render(request, 'register.html', context)
 
 # User login
-# @unauthenticated_user
+@unauthenticated_user
 def LoginPage(request):
     if request.method == 'POST':
         username = request.POST.get("username")
@@ -98,7 +99,7 @@ def LoginMobileUser(request):
             return HttpResponse("LOGIN_FAILURE")
 
 # @login_required(login_url='login') 
-# @allowed_users(allowed_roles=['admin'])
+# @allowed_users(allowed_roles=['admin', 'user'])
 def GetAllPlans(request):
     if request.method == 'GET':
         plans = Floorplan.objects.all().values()
@@ -112,7 +113,7 @@ def GetAllPlans(request):
         return HttpResponse(CURRENT_PLAN)
 
 # @login_required(login_url='login')  
-# @allowed_users(allowed_roles=['admin']) 
+# @allowed_users(allowed_roles=['admin', 'user']) 
 def SaveMappedPoints(request):
     global CURRENT_PLAN
     if request.method == 'POST':
@@ -149,7 +150,7 @@ TEST_POINT_COUNT = 0
 TEST_POINT_MAX = get_test_count()
 
 # @login_required(login_url='login')  
-# @allowed_users(allowed_roles=['admin']) 
+# @allowed_users(allowed_roles=['admin', 'user']) 
 def GetLocation(request):
     global CURRENT_PLAN
     print("Current plan = ", CURRENT_PLAN)
@@ -157,6 +158,29 @@ def GetLocation(request):
     global TEST_POINT_COUNT
     global TEST_POINT_MAX
 
+    # quick fix
+    mydata = []
+    rssistrls = list(MappedPoint.objects.all().filter(plan=CURRENT_PLAN))
+    for item in rssistrls:
+        tempdict = {}
+        tempdict['point'] = item.imgcoordinate
+        tempdict['vector'] = item.scanvalues
+        mydata.append(tempdict)
+    print(mydata)
+
+
+    if PROJECT_PHASE == "dev" and TEST_POINT_COUNT==0:
+        algols = [knnalgo.train_model, extratrees.train_model, randomforest.train_model]
+        for algo in algols:
+            istrained = algo(mydata)
+
+    
+    # update status of floorplan
+        planobj = Floorplan.objects.get(title=CURRENT_PLAN)
+        planobj.status = "MAPPED"
+        planobj.save()
+   
+    # actual function
     mydata = json.loads(request.body.decode("utf-8"))
     testvector = mydata[0]['vector']
     print(testvector)
@@ -174,7 +198,8 @@ def GetLocation(request):
         print("Test point saved: ", TEST_POINT_COUNT)
 
     if TEST_POINT_COUNT == TEST_POINT_MAX:
-            evaluate_models()
+            # evaluate_models()
+            pass
 
  
     location = knnalgo.get_prediction(testvector)
@@ -182,4 +207,34 @@ def GetLocation(request):
     locationls = location.tolist()  
     # response format looks like --> [[0, 0]]
     return JsonResponse(list(locationls), safe=False)
-    
+
+def EvaluateAlgos(request):
+    plan_name = "MRTHALF B2L1 Cleaned Floor Plan Image"
+    set_current_plan(plan_name)
+    save_cleaned_aplist(plan_name)
+
+    # retrieve all data and convert to list of dictionaries
+    mydata = []
+    rssistrls = list(MappedPoint.objects.all().filter(plan=plan_name))
+    for item in rssistrls:
+        tempdict = {}
+        tempdict['point'] = item.imgcoordinate
+        tempdict['vector'] = item.scanvalues
+        mydata.append(tempdict)
+
+    # get model input 
+    x, y = get_model_inputs(mydata)
+
+    # save as dataframe
+    point_count = len(x)
+    df = pd.DataFrame(data=x)
+    df['target'] = y
+
+    filename = plan_name.replace(" ", "") + "_data.xlsx"
+    with pd.ExcelWriter(filename) as writer:  
+        df.to_excel(writer, sheet_name='values', index=False)
+
+    # send to training
+    simplenn.train_model(x, y)
+
+    return HttpResponse(y)

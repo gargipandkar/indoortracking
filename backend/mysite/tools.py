@@ -10,7 +10,10 @@ CURRENT_PLAN = ""
 
 def set_current_plan(plan):
     global CURRENT_PLAN
+    global filename_pred
     CURRENT_PLAN = plan
+    fileplan = plan.replace(" ", "")
+    # filename_pred = "webapp/algos/evaluation"+fileplan+".xls"
 
 def parse_vector_string(vectorstr):
     vectorls = vectorstr.replace("[", "").replace("]", "").replace(" ", "")
@@ -28,7 +31,9 @@ def get_superset(vectordictls):
     global uniqueapls
     global CURRENT_PLAN
     # get superset of all APs scanned across floor in alphabetical order
+    uniqueapls.clear()
     uniqueapls.extend(list(set(k for vectordict in vectordictls for k in vectordict.keys())))
+    # uniqueapls.extend(list(set(k for vectordict in vectordictls for k in vectordict.keys())))
     uniqueapls.sort()
     save_aplist(CURRENT_PLAN, uniqueapls)
 
@@ -47,12 +52,21 @@ def filter_aps(testdict):
     global uniqueapls
     # return dict([(key, val) for key, val in testdict.items() if key in uniqueapls])
     # only consider fixed APs --> any of the SUTD networks or eduroam
-    return dict([(key, val) for key, val in testdict.items() if key in uniqueapls and ("SUTD" in key or "eduroam" in key)])
+    return dict([(key, val) for key, val in testdict.items() if key in uniqueapls and ("SUTD_Wifi" in key or "SUTD_Guest" in key or "eduroam" in key)])
 
 def save_aplist(currentplan, ls):
     print(currentplan)
     planobj = Floorplan.objects.get(title=currentplan)
     planobj.aplist = ls
+    planobj.save()
+
+def save_cleaned_aplist(currentplan):
+    planobj = Floorplan.objects.get(title=currentplan)
+    ls = planobj.aplist
+    ls = ls.replace("[", "").replace("]", "").replace("'", "").replace(" ", "")
+    ls = ls.split(",")
+    cleanls = [item for item in ls if "SUTD_Wifi" in item or "SUTD_Guest" in item or "eduroam" in item]
+    planobj.aplist = cleanls
     planobj.save()
 
 def retrieve_aplist():
@@ -78,7 +92,7 @@ def get_model_inputs(scanmap):
         y.append(parse_point_string(pointstr))
 
     get_superset(temp_x)
-    print("Unique APs = ", uniqueapls)
+    # print("Unique APs = ", uniqueapls)
     x = clean_vectors(temp_x)
 
     return x, y
@@ -137,7 +151,21 @@ def evaluate_models():
         metricdf.to_excel(writer, sheet_name='metrics', index=False)
 
 
+def export_data(x, y):
+    df = pd.read_excel(filename_pred)
+    actual_ls = [item.split(",") for item in df[actual_col].to_list()]
 
+    metric_dict = {}
+    for col in df.columns:
+        if col != actual_col:
+            ls = df[col].to_list()
+            ls = [item.split(",") for item in ls]
+            avg_dist = euclidean_distance(actual_ls, ls)
+            metric_dict[col] = [avg_dist]
+            
+    metricdf=pd.DataFrame.from_dict(metric_dict)
+    with pd.ExcelWriter(filename_pred) as writer:  
+        df.to_excel(writer, sheet_name='values', index=False)
 
 
 
