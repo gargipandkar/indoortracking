@@ -33,7 +33,6 @@ def get_superset(vectordictls):
     # get superset of all APs scanned across floor in alphabetical order
     uniqueapls.clear()
     uniqueapls.extend(list(set(k for vectordict in vectordictls for k in vectordict.keys())))
-    # uniqueapls.extend(list(set(k for vectordict in vectordictls for k in vectordict.keys())))
     uniqueapls.sort()
     save_aplist(CURRENT_PLAN, uniqueapls)
 
@@ -66,6 +65,7 @@ def save_cleaned_aplist(currentplan):
     ls = ls.replace("[", "").replace("]", "").replace("'", "").replace(" ", "")
     ls = ls.split(",")
     cleanls = [item for item in ls if "SUTD_Wifi" in item or "SUTD_Guest" in item or "eduroam" in item]
+    print("Cleaned AP list: ", cleanls)
     planobj.aplist = cleanls
     planobj.save()
 
