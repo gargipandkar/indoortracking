@@ -12,8 +12,6 @@ def set_current_plan(plan):
     global CURRENT_PLAN
     global filename_pred
     CURRENT_PLAN = plan
-    fileplan = plan.replace(" ", "")
-    # filename_pred = "webapp/algos/evaluation"+fileplan+".xls"
 
 def parse_vector_string(vectorstr):
     vectorls = vectorstr.replace("[", "").replace("]", "").replace(" ", "")
@@ -34,12 +32,13 @@ def get_superset(vectordictls):
     uniqueapls.clear()
     uniqueapls.extend(list(set(k for vectordict in vectordictls for k in vectordict.keys())))
     uniqueapls.sort()
-    save_aplist(CURRENT_PLAN, uniqueapls)
+    # save_aplist(CURRENT_PLAN, uniqueapls)
 
 def clean_vectors(vectordictls):
     # a vector is a list of the RSSI value of each AP in the superset (and 0 if AP was not detected at a point)
     result = []
     for item in vectordictls:
+        print("Unique AP length: ",len(uniqueapls))
         inputdict = dict.fromkeys(uniqueapls, 0)
         inputdict.update(item)
         inputls = [int(val) for val in inputdict.values()]
@@ -77,6 +76,7 @@ def retrieve_aplist():
     uniqueapls = planobj.aplist
     uniqueapls = uniqueapls.replace("[", "").replace("]", "").replace("'", "").replace(" ", "")
     uniqueapls = uniqueapls.split(",")
+    print("Retrieved: ", len(uniqueapls))
 
 def get_model_inputs(scanmap):
     #x --> vectors of RSSI values
@@ -92,12 +92,16 @@ def get_model_inputs(scanmap):
         y.append(parse_point_string(pointstr))
 
     get_superset(temp_x)
-    # print("Unique APs = ", uniqueapls)
+    
     x = clean_vectors(temp_x)
+    print("Training vector: ", len(x[0]))
 
     return x, y
 
-    
+def get_uniqueapls():
+    global uniqueapls
+    return uniqueapls
+
 def euclidean_distance(actual_ls, pred_ls):
     numpoints = len(pred_ls)
     result = 0

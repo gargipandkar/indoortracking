@@ -15,6 +15,6 @@ urlpatterns = [
     path('getplans/', views.GetAllPlans, name='getplans'),
     path('savemapping/', views.SaveMappedPoints, name='savemapping'),
     path('getlocation/', views.GetLocation, name='getlocation'),
-    path('evaluatealgos/', views.EvaluateAlgos, name='evaluatealgos'),
+    # path('evaluatealgos/', views.EvaluateAlgos, name='evaluatealgos'),
 ]
 

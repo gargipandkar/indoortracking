@@ -20,9 +20,7 @@ import json
 
 # My python files
 from tools import *
-# import knnalgo
-import extratrees
-import randomforest
+import knnalgo
 import saecnn
 import evaldl
 import evalreg
@@ -127,35 +125,60 @@ def GetAllPlans(request):
 def SaveMappedPoints(request):
     global CURRENT_PLAN
     if request.method == 'POST':
+        set_current_plan(CURRENT_PLAN)
+        
         mydata = json.loads(request.body.decode("utf-8"))
         print("Current plan = ", CURRENT_PLAN)
+        
+        if (len(mydata)<11):
+            return JsonResponse(list(["FAILED"]), safe=False)
+
 
         for item in mydata:
             print("Point = ", item['point'])
             print("Vector = ", item['vector'])
-            point = MappedPoint.objects.create(
-                imgcoordinate=item['point'], scanvalues=item['vector'], plan=CURRENT_PLAN)
+            point = MappedPoint.objects.create(imgcoordinate=item['point'], scanvalues=item['vector'], plan=CURRENT_PLAN)
 
-        # if PROJECT_PHASE == "dev":
-        #     algols = [knnalgo.train_model,
-        #               extratrees.train_model, randomforest.train_model]
-        #     for algo in algols:
-        #         istrained = algo(mydata)
-        # else:
-        #     istrained = knnalgo.train_model(mydata)
-        
-        istrained = knnalgo.train_model(mydata)
-
-        if PROJECT_PHASE == "dev":
-            # initialize excel file for model evaluation
-            initialize_predfile()
-
-        # update status of floorplan
+        # istrained = False
         planobj = Floorplan.objects.get(title=CURRENT_PLAN)
-        planobj.status = "MAPPED"
-        planobj.save()
-
-        print("Model Trained = ", istrained)
+        print(planobj)
+        status = planobj.status
+        if status=="NEW":
+            # update status of floorplan
+            planobj.status = "MAPPED"
+            # save initial AP list
+            x, y = get_model_inputs(mydata)
+            ls = get_uniqueapls()
+            print(len(ls), len(x[0]))
+            planobj.aplist = ls
+            planobj.save()
+        elif status=="MAPPED":
+            # retrieve all data and convert to list of dictionaries
+            rssistrls = list(MappedPoint.objects.all().filter(plan=CURRENT_PLAN))
+            mydata = []
+            for item in rssistrls:
+                tempdict = {}
+                tempdict['point'] = item.imgcoordinate
+                tempdict['vector'] = item.scanvalues
+                mydata.append(tempdict)
+            # save new AP list
+            x, y = get_model_inputs(mydata)
+            ls = get_uniqueapls()
+            print(len(ls), len(x[0]))
+            planobj.aplist = ls
+            planobj.save()
+        
+        # # train and save model if enough data
+        # pointls = list(MappedPoint.objects.all().filter(plan=CURRENT_PLAN))
+        # numpoints = len(pointls)
+        # if (numpoints>10):
+        #     filename = "webapp/algos/"+CURRENT_PLAN.replace(" ", "")+"_model.sav"        
+        #     istrained = knnalgo.train_model(mydata, filename)
+        #     # update status of floorplan
+        #     planobj.status = "TRAINED"
+            
+        
+        # print("Model Trained = ", istrained)
         return JsonResponse(list(["SAVED"]), safe=False)
 
 
@@ -165,63 +188,55 @@ TEST_POINT_MAX = get_test_count()
 
 # @login_required(login_url='login')
 # @allowed_users(allowed_roles=['admin', 'user'])
-
-
 def GetLocation(request):
     global CURRENT_PLAN
     print("Current plan = ", CURRENT_PLAN)
+    
+    set_current_plan(CURRENT_PLAN)
+    
+    planobj = Floorplan.objects.get(title=CURRENT_PLAN)
+    status = planobj.status
+    
+    # not able to get predictions wihtout a model
+    if status=="NEW":
+        # response format looks like --> [[0, 0]]
+        return JsonResponse(list([[0, 0]]), safe=False)
+    
+    elif status=="MAPPED":
+        rssistrls = list(MappedPoint.objects.all().filter(plan=CURRENT_PLAN))
+        numpoints = len(rssistrls)
+        if (numpoints>9):
+            # retrieve all data and convert to list of dictionaries
+            mydata = []
+            for item in rssistrls:
+                tempdict = {}
+                tempdict['point'] = item.imgcoordinate
+                tempdict['vector'] = item.scanvalues
+                mydata.append(tempdict)
+    
+            filename = "webapp/algos/"+CURRENT_PLAN.replace(" ", "")+"_model.sav"        
+            istrained = knnalgo.train_model(mydata, filename)
+            print("Model trained = ", istrained)
+            # update status of floorplan
+            planobj.status = "TRAINED"
+            planobj.save()
+            
+        # response format looks like --> [[0, 0]]
+        return JsonResponse([[0, 0]], safe=False)
 
-    global TEST_POINT_COUNT
-    global TEST_POINT_MAX
+    # return prediction with model
+    else:
+        # RSSI data from testing location
+        testdata = json.loads(request.body.decode("utf-8"))
+        testvector = testdata[0]['vector']
+        print(testvector)
 
-    # quick fix
-    mydata = []
-    rssistrls = list(MappedPoint.objects.all().filter(plan=CURRENT_PLAN))
-    for item in rssistrls:
-        tempdict = {}
-        tempdict['point'] = item.imgcoordinate
-        tempdict['vector'] = item.scanvalues
-        mydata.append(tempdict)
-    print(mydata)
-
-    if PROJECT_PHASE == "dev" and TEST_POINT_COUNT == 0:
-        algols = [knnalgo.train_model,
-                  extratrees.train_model, randomforest.train_model]
-        for algo in algols:
-            istrained = algo(mydata)
-
-    # update status of floorplan
-        planobj = Floorplan.objects.get(title=CURRENT_PLAN)
-        planobj.status = "MAPPED"
-        planobj.save()
-
-    # actual function
-    mydata = json.loads(request.body.decode("utf-8"))
-    testvector = mydata[0]['vector']
-    print(testvector)
-
-    if PROJECT_PHASE == "dev" and TEST_POINT_COUNT < TEST_POINT_MAX:
-        print("# of test points = ", TEST_POINT_MAX)
-        algols = [knnalgo.get_prediction,
-                  extratrees.get_prediction, randomforest.get_prediction]
-        ls = []
-        for algo in algols:
-            loc = algo(testvector)
-            ls.append(loc.tolist())
-        save_predictions(TEST_POINT_COUNT, ls)
-        TEST_POINT_COUNT += 1
-
-        print("Test point saved: ", TEST_POINT_COUNT)
-
-    if TEST_POINT_COUNT == TEST_POINT_MAX:
-        # evaluate_models()
-        pass
-
-    location = randomforest.get_prediction(testvector)
-    print(location)
-    locationls = location.tolist()
-    # response format looks like --> [[0, 0]]
-    return JsonResponse(list(locationls), safe=False)
+        filename = "webapp/algos/"+CURRENT_PLAN.replace(" ", "")+"_model.sav" 
+        location = knnalgo.get_prediction(testvector, filename)
+        print(location)
+        locationls = location.tolist()
+        # response format looks like --> [[0, 0]]
+        return JsonResponse(list(locationls), safe=False)
 
 
 # ONLY USED TO COMPARE MODEL PERFORMANCE
