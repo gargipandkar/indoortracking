@@ -11,6 +11,8 @@ from sklearn.model_selection import cross_val_score, cross_val_predict
 from sklearn.metrics import SCORERS
 
 def get_tunedknn_model(X_data, y_data):
+    # for large space, best params --> {'algorithm': 'ball_tree', 'leaf_size': 20, 'metric': 'euclidean', 'n_neighbors': 6, 'weights': 'distance'}
+    # for small space, best params --> {'algorithm': 'kd_tree', 'leaf_size': 40, 'metric': 'manhattan', 'n_neighbors': 3, 'weights': 'distance'}
     # model = KNeighborsRegressor(algorithm='brute', leaf_size=20, metric='chebyshev', n_neighbors=4, weights='distance')
     model = optimize_knn(X_data, y_data)
     return model
@@ -41,7 +43,8 @@ def evaluate_model(X_data, y_data, model):
     return results, edist
 
 
-model_dict={"knn": get_tunedknn_model, "randomforest": get_tunedrf_model, "extratrees": get_tunedet_model}
+# model_dict={"knn": get_tunedknn_model, "randomforest": get_tunedrf_model, "extratrees": get_tunedet_model}
+model_dict={"knn": get_tunedknn_model}
 
 def get_evaluation_results(X, y):
     dfls = []

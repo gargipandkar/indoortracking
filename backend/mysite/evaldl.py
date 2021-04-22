@@ -76,7 +76,7 @@ def evaluate_model(X, y, model, name):
         elif name=="NN":
             finalmodel = model
             es = EarlyStopping(monitor='val_loss', patience=100, verbose=0, mode='auto', restore_best_weights=True)
-            finalmodel.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=50, batch_size=50,  verbose=0, callbacks=[es])
+            finalmodel.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=25, batch_size=50,  verbose=0, callbacks=[es])
         elif name=="saeCNN":
             # fit encoder
             model.fit(X, X, batch_size=batch_size, epochs=epochs, verbose=verbose)

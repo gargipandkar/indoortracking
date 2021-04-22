@@ -224,56 +224,55 @@ def GetLocation(request):
     return JsonResponse(list(locationls), safe=False)
 
 
+# ONLY USED TO COMPARE MODEL PERFORMANCE
 def EvaluateAlgos(request):
-    plan_name = "MRTHALF B2L1 Cleaned Floor Plan Image"
+    plan_name = "SUTD CC Vertical"
     set_current_plan(plan_name)
     
-    # remove any unwanted APs if saved
-    planobj = Floorplan.objects.get(title=plan_name)
-    ls = planobj.aplist
-    ls = ls.replace("[", "").replace("]", "").replace("'", "").replace(" ", "")
-    ls = ls.split(",")
-    cleanls = [item for item in ls if "SUTD_Wifi" in item or "SUTD_Guest" in item or "eduroam" in item]
-    print("Cleaned AP list: ", cleanls, " of length ", len(cleanls))
-    planobj.aplist = cleanls
-    planobj.save()
+    # # remove any unwanted APs if saved
+    # planobj = Floorplan.objects.get(title=plan_name)
+    # ls = planobj.aplist
+    # ls = ls.replace("[", "").replace("]", "").replace("'", "").replace(" ", "")
+    # ls = ls.split(",")
+    # cleanls = [item for item in ls if "SUTD_Wifi" in item or "SUTD_Guest" in item or "eduroam" in item]
+    # print("Cleaned AP list: ", cleanls, " of length ", len(cleanls))
+    # planobj.aplist = cleanls
+    # planobj.save()
     
-    
-    # save_cleaned_aplist(plan_name)
+    # retrieve all data and convert to list of dictionaries
+    mydata = []
+    rssistrls = list(MappedPoint.objects.all().filter(plan=plan_name))
+    for item in rssistrls:
+        tempdict = {}
+        tempdict['point'] = item.imgcoordinate
+        tempdict['vector'] = item.scanvalues
+        mydata.append(tempdict)
 
-    # # retrieve all data and convert to list of dictionaries
-    # mydata = []
-    # rssistrls = list(MappedPoint.objects.all().filter(plan=plan_name))
-    # for item in rssistrls:
-    #     tempdict = {}
-    #     tempdict['point'] = item.imgcoordinate
-    #     tempdict['vector'] = item.scanvalues
-    #     mydata.append(tempdict)
+    # get model input
+    x, y = get_model_inputs(mydata)
+    print("Data points collected: ", len(x))
+    print("# of APs: ", len(x[0]))
+    # save as dataframe
+    point_count = len(x)
+    df = pd.DataFrame(data=x)
+    df['target'] = y
 
-    # # get model input
-    # x, y = get_model_inputs(mydata)
-
-    # # save as dataframe
-    # point_count = len(x)
-    # df = pd.DataFrame(data=x)
-    # df['target'] = y
-
-    # filename = "webapp/algos/" +plan_name.replace(" ", "") + "_data.xlsx"
-    # with pd.ExcelWriter(filename) as writer:
-    #     df.to_excel(writer, sheet_name='data', index=False)
+    filename = "webapp/algos/" +plan_name.replace(" ", "") + "_data.xlsx"
+    with pd.ExcelWriter(filename) as writer:
+        df.to_excel(writer, sheet_name='data', index=False)
         
-    # evalfile = "webapp/algos/" + plan_name.replace(" ", "") + "_evaluation.xlsx"
+    evalfile = "webapp/algos/" + plan_name.replace(" ", "") + "_evaluation.xlsx"
 
-    # # evaluate on all available models
-    # resls = []
-    # evalfunc=[evalreg.get_evaluation_results, evaldl.get_evaluation_results, saecnn.get_evaluation_results]
-    # for algoeval in evalfunc:
-    #     ls = algoeval(x, y)
-    #     resls+=ls
+    # evaluate on all available models
+    resls = []
+    evalfunc=[evalreg.get_evaluation_results, evaldl.get_evaluation_results, saecnn.get_evaluation_results]
+    for algoeval in evalfunc:
+        ls = algoeval(x, y)
+        resls+=ls
         
-    # resdf  = pd.DataFrame(resls)
-    # resdf.rename(columns={0: "Algo", 1: "Metric (MSE)", 2:"Euclidean distance"}, inplace = True)
-    # with pd.ExcelWriter(evalfile) as writer:
-    #     resdf.to_excel(writer, sheet_name='evaluation', index=False)
+    resdf  = pd.DataFrame(resls)
+    resdf.rename(columns={0: "Algo", 1: "Metric (MSE)", 2:"Euclidean distance"}, inplace = True)
+    with pd.ExcelWriter(evalfile) as writer:
+        resdf.to_excel(writer, sheet_name='evaluation', index=False)
 
     return HttpResponse(plan_name)

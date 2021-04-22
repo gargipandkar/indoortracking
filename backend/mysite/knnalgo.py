@@ -1,6 +1,5 @@
 # k-nearest neighbors for multioutput regression
 from sklearn.neighbors import KNeighborsRegressor
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV
 import pickle
 from tools import *
@@ -9,8 +8,8 @@ from sklearn.model_selection import RepeatedKFold
 from sklearn.model_selection import cross_val_score, cross_val_predict
 from sklearn.metrics import SCORERS
 
-filename = "webapp/algos/knn_model.sav"
-model = KNeighborsRegressor(weights='distance', p=1)
+# filename = "webapp/algos/knn_model.sav"
+model = KNeighborsRegressor('algorithm': 'ball_tree', 'leaf_size': 20, 'metric': 'euclidean', 'n_neighbors': 6, 'weights': 'distance')
 
 # uniqueapls = []
 
@@ -46,7 +45,7 @@ model = KNeighborsRegressor(weights='distance', p=1)
 #     return dict([(key, val) for key, val in testdict.items() if key in uniqueapls])
 
 
-def train_model(scanmap):
+def train_model(scanmap, filename):
     # #x --> vectors of RSSI values
     # x = []
     # temp_x = []
@@ -80,7 +79,7 @@ def get_trained_model():
     return loaded_model
 
 
-def get_prediction(testvector):
+def get_prediction(testvector, filename):
     # load the model from disk
     loaded_model = pickle.load(open(filename, 'rb'))
     # retrieve AP list
