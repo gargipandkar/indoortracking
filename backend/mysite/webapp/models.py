@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Floorplan(models.Model):
-    title = models.TextField()
+    title = models.TextField(unique=True)
     plan = models.ImageField()
     aplist = models.TextField(null=True)
     status = models.TextField(default="NEW")

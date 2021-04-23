@@ -72,8 +72,6 @@ def LogoutUser(request):
     return redirect('login')
 
 # Webapp views
-
-
 class HomePageView(ListView):
     model = Floorplan
     template_name = 'home.html'
@@ -102,9 +100,6 @@ def LoginMobileUser(request):
         else:
             return HttpResponse("LOGIN_FAILURE")
 
-# @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admin', 'user'])
-
 
 def GetAllPlans(request):
     if request.method == 'GET':
@@ -117,9 +112,6 @@ def GetAllPlans(request):
         print(CURRENT_PLAN)
         set_current_plan(CURRENT_PLAN)
         return HttpResponse(CURRENT_PLAN)
-
-# @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admin', 'user'])
 
 
 def SaveMappedPoints(request):
@@ -182,12 +174,6 @@ def SaveMappedPoints(request):
         return JsonResponse(list(["SAVED"]), safe=False)
 
 
-# define counter variable for test points
-TEST_POINT_COUNT = 0
-TEST_POINT_MAX = get_test_count()
-
-# @login_required(login_url='login')
-# @allowed_users(allowed_roles=['admin', 'user'])
 def GetLocation(request):
     global CURRENT_PLAN
     print("Current plan = ", CURRENT_PLAN)
@@ -239,20 +225,10 @@ def GetLocation(request):
         return JsonResponse(list(locationls), safe=False)
 
 
-# ONLY USED TO COMPARE MODEL PERFORMANCE
+# ONLY USED TO COMPARE MODEL PERFORMANCE --> corresponding url removed
 def EvaluateAlgos(request):
     plan_name = "SUTD CC Vertical"
     set_current_plan(plan_name)
-    
-    # # remove any unwanted APs if saved
-    # planobj = Floorplan.objects.get(title=plan_name)
-    # ls = planobj.aplist
-    # ls = ls.replace("[", "").replace("]", "").replace("'", "").replace(" ", "")
-    # ls = ls.split(",")
-    # cleanls = [item for item in ls if "SUTD_Wifi" in item or "SUTD_Guest" in item or "eduroam" in item]
-    # print("Cleaned AP list: ", cleanls, " of length ", len(cleanls))
-    # planobj.aplist = cleanls
-    # planobj.save()
     
     # retrieve all data and convert to list of dictionaries
     mydata = []

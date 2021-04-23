@@ -37,3 +37,18 @@ def get_prediction(testvector, filename):
     print("Test vector: ", len(testvector), testvector, len(testvector[0]))
     result = loaded_model.predict(testvector)
     return result
+
+# Hyperparameter tuning
+def optimize(x, y):
+    model=KNeighborsRegressor()
+    params={'n_neighbors': [3, 4, 5, 6],
+        'weights': ['uniform', 'distance'],
+        'algorithm': ['brute', 'kd_tree', 'ball_tree'],
+        'metric': ['manhattan', 'euclidean', 'chebyshev', 'minkowski'],
+        'leaf_size': [20, 30, 40]}
+
+    gcv=GridSearchCV(model, param_grid=params, verbose=1)
+    gcv.fit(x, y)
+    # The best hyper parameters set
+    print("Best Hyper Parameters:\n", gcv.best_params_)
+    return gcv.best_estimator_

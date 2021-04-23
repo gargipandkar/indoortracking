@@ -3,9 +3,7 @@ import numpy as np
 from webapp.models import Floorplan
 
 uniqueapls = []
-filename_pred = "webapp/algos/evaluation.xls"
 MODEL_NAMES = ["knn", "extratrees", "randomforest"]
-actual_col = "Actual coordinates"
 CURRENT_PLAN = ""
 
 def set_current_plan(plan):
@@ -113,28 +111,6 @@ def euclidean_distance(actual_ls, pred_ls):
     result = round(result/numpoints, 3)
     return result
         
-
-def initialize_predfile():
-    df = pd.read_excel(filename_pred)
-    for m in MODEL_NAMES:
-        df[m]=0
-    with pd.ExcelWriter(filename_pred) as writer:  
-        df.to_excel(writer, sheet_name='values', index=False)
-
-def get_test_count():
-    df = pd.read_excel(filename_pred)
-    return len(df)
-
-def save_predictions(i, pred_ls):
-    df = pd.read_excel(filename_pred)
-    # ls should be list of list of floats --> [[1, 2], [1, 1], [3, 2]]
-    strls = []
-    for m in pred_ls:
-        stritem = ",".join([str(coor) for coor in m]).replace("[", "").replace("]", "")
-        strls.append(stritem)
-    df.loc[i, MODEL_NAMES] = strls
-    with pd.ExcelWriter(filename_pred) as writer:  
-        df.to_excel(writer, sheet_name='values', index=False)
     
 
 def evaluate_models():
