@@ -35,7 +35,7 @@ public class APIRequests {
         progressDialog.setCancelable(true);
 
         String url = base_url+"/getplans";
-        String bucket_url = "https://storage.googleapis.com/floorplan-images/";
+        String bucket_url = "https://storage.googleapis.com/GCLOUD_BUCKET_NAME/";
         JsonArrayRequest getRequest = new JsonArrayRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONArray>() {
                     @Override
